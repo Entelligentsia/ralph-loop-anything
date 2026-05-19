@@ -1,25 +1,25 @@
-# ralph-loop-anything
+# pi-ralph
 
 **A [pi](https://github.com/earendil-works/pi) extension** — iterative goal-achievement loop with Generator → Critique → Judge agents.
 
-[![npm](https://img.shields.io/npm/v/@entelligentsia/ralph-loop-anything?style=flat-square)](https://www.npmjs.com/package/@entelligentsia/ralph-loop-anything)
+[![npm](https://img.shields.io/npm/v/@entelligentsia/pi-ralph?style=flat-square)](https://www.npmjs.com/package/@entelligentsia/pi-ralph)
 
 ## Install
 
 ```
-pi install npm:@entelligentsia/ralph-loop-anything
+pi install npm:@entelligentsia/pi-ralph
 ```
 
 Or pin a version:
 
 ```
-pi install npm:@entelligentsia/ralph-loop-anything@1.0.1
+pi install npm:@entelligentsia/pi-ralph@1.0.0
 ```
 
 From GitHub:
 
 ```
-pi install git:github.com:Entelligentsia/ralph-loop-anything
+pi install git:github.com:Entelligentsia/pi-ralph
 ```
 
 ## What It Does
@@ -135,10 +135,10 @@ Total for `--loop 3`: 1 + 1 + (3 × 3) = **11** LLM calls
 | File | Purpose |
 |------|---------|
 | `index.ts` | Thin entry point — parses args, calls orchestrator |
-| `agents/orchestrator.ts` | Coordinates full flow: feasibility, prompts, loop, final verdict |
+| `agents/orchestrator.ts` | Coordinates full flow: feasibility, prompts, loop, verdict |
 | `agents/generator.ts` | Generator agent — produces or improves a result |
 | `agents/critique.ts` | Critique agent — evaluates result against the goal |
-| `agents/judge.ts` | Judge agent — decides if the goal is achieved |
+| `agents/judge.ts` | Judge agent — decides if goal is achieved |
 | `types.ts` | Shared interfaces (`LoopIteration`, `LoopStep`, etc.) |
 | `prompts.ts` | Static system prompts (feasibility, prompt generator, fallbacks) |
 | `helpers.ts` | Text utilities (`truncate`, `firstNLines`) |

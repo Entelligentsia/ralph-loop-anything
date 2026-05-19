@@ -1,6 +1,6 @@
 {
-  "name": "@entelligentsia/ralph-loop-anything",
-  "version": "1.0.2",
+  "name": "@entelligentsia/pi-ralph",
+  "version": "1.0.0",
   "description": "Iterative goal-achievement loop for pi — Generator→Critique→Judge, streaming output as it happens",
   "keywords": [
     "pi",
@@ -14,11 +14,11 @@
   "author": "Entelligentsia",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Entelligentsia/ralph-loop-anything.git"
+    "url": "git+https://github.com/Entelligentsia/pi-ralph.git"
   },
-  "homepage": "https://github.com/Entelligentsia/ralph-loop-anything#readme",
+  "homepage": "https://github.com/Entelligentsia/pi-ralph#readme",
   "bugs": {
-    "url": "https://github.com/Entelligentsia/ralph-loop-anything/issues"
+    "url": "https://github.com/Entelligentsia/pi-ralph/issues"
   },
   "main": "index.ts",
   "files": [
