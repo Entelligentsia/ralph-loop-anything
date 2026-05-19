@@ -134,7 +134,11 @@ Total for `--loop 3`: 1 + 1 + (3 × 3) = **11** LLM calls
 
 | File | Purpose |
 |------|---------|
-| `index.ts` | Extension entry point, command handler, step-by-step message dispatch |
+| `index.ts` | Thin entry point — parses args, calls orchestrator |
+| `agents/orchestrator.ts` | Coordinates full flow: feasibility, prompts, loop, final verdict |
+| `agents/generator.ts` | Generator agent — produces or improves a result |
+| `agents/critique.ts` | Critique agent — evaluates result against the goal |
+| `agents/judge.ts` | Judge agent — decides if the goal is achieved |
 | `types.ts` | Shared interfaces (`LoopIteration`, `LoopStep`, etc.) |
 | `prompts.ts` | Static system prompts (feasibility, prompt generator, fallbacks) |
 | `helpers.ts` | Text utilities (`truncate`, `firstNLines`) |
