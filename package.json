@@ -1,9 +1,42 @@
 {
-  "name": "ralph-loop-anything",
+  "name": "@entelligentsia/ralph-loop-anything",
   "version": "1.0.0",
-  "description": "Dynamic iterative Ralph loop extension for pi - Generator→Critique→Judge cycle",
-  "private": true,
+  "description": "Iterative goal-achievement loop for pi — Generator→Critique→Judge, streaming output as it happens",
+  "keywords": [
+    "pi",
+    "pi-coding-agent",
+    "llm",
+    "agent",
+    "iterative",
+    "refinement"
+  ],
+  "license": "MIT",
+  "author": "Entelligentsia",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Entelligentsia/ralph-loop-anything.git"
+  },
+  "homepage": "https://github.com/Entelligentsia/ralph-loop-anything#readme",
+  "bugs": {
+    "url": "https://github.com/Entelligentsia/ralph-loop-anything/issues"
+  },
+  "main": "index.ts",
+  "files": [
+    "index.ts",
+    "types.ts",
+    "renderer.ts",
+    "prompts.ts",
+    "helpers.ts",
+    "llm.ts",
+    "argParser.ts"
+  ],
   "pi": {
     "extensions": ["./index.ts"]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": ">=0.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
