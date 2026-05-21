@@ -53,6 +53,7 @@ export async function execute(
 
 	if (feasibility.error) {
 		send(pi, `## Feasibility check failed\n\n${feasibility.error}`);
+		persistToSession(ctx, goal, `Feasibility check failed: ${feasibility.error}`, undefined);
 		return null;
 	}
 
@@ -69,6 +70,7 @@ export async function execute(
 
 	if (!feasible) {
 		send(pi, `## Goal not achievable\n\n${feasibilityReason || feasibility.text.slice(0, 500)}`);
+		persistToSession(ctx, goal, `Goal not achievable: ${feasibilityReason || feasibility.text.slice(0, 500)}`, undefined);
 		return null;
 	}
 
@@ -112,6 +114,7 @@ export async function execute(
 
 		if (genResult.error) {
 			send(pi, Generator.formatError(i, maxLoops, genResult.error));
+			persistToSession(ctx, goal, `Generator failed: ${genResult.error}`, undefined);
 			return null;
 		}
 
@@ -129,6 +132,7 @@ export async function execute(
 
 		if (critResult.error) {
 			send(pi, Critique.formatError(i, maxLoops, critResult.error));
+			persistToSession(ctx, goal, `Critique failed: ${critResult.error}`, undefined);
 			return null;
 		}
 
@@ -147,6 +151,7 @@ export async function execute(
 
 		if (judgeResult.error) {
 			send(pi, Judge.formatError(i, maxLoops, judgeResult.error));
+			persistToSession(ctx, goal, `Judge failed: ${judgeResult.error}`, undefined);
 			return null;
 		}
 
@@ -192,6 +197,8 @@ export async function execute(
 	lines.push(``);
 	lines.push(`*${iterations.length}/${maxLoops} iterations, domain: ${domain}*`);
 
+	const finalText = lines.join("\n");
+
 	const details: RalphLoopResult = {
 		goal,
 		domain,
@@ -207,7 +214,15 @@ export async function execute(
 		iterations,
 	};
 
-	send(pi, lines.join("\n"), details);
+	send(pi, finalText, details);
+
+	// ── Step 5: Persist as conversation messages ────────────────────────
+	// pi.sendMessage() creates custom_message entries, but /export and /share
+	// require the session file to exist on disk. The session file is only
+	// flushed when an assistant message is present (SessionManager._persist
+	// defers writes until an assistant entry triggers a full flush). Without
+	// this, /export returns "Nothing to export yet - start a conversation first".
+	persistToSession(ctx, goal, finalText, lastIteration);
 
 	return { details, achieved };
 }
@@ -263,6 +278,51 @@ function buildIteration(loop: number): LoopIteration {
 		finalCriticism: "",
 		finalJudgeReason: "",
 	};
+}
+
+// ---------------------------------------------------------------------------
+// Session Persistence (for /export and /share)
+// ---------------------------------------------------------------------------
+
+/**
+ * Append user + assistant messages to the session so /export and /share work.
+ *
+ * pi.sendMessage() creates custom_message entries (role: "custom"), but
+ * SessionManager._persist() won't write the session file to disk until an
+ * assistant message exists. This means /export finds no file and returns
+ * "Nothing to export yet - start a conversation first". By appending a
+ * proper user/assistant pair, the session flushes to disk and becomes
+ * exportable.
+ */
+function persistToSession(
+	ctx: ExtensionCommandContext,
+	goal: string,
+	finalText: string,
+	_lastIteration: LoopIteration | undefined,
+): void {
+	ctx.sessionManager.appendMessage({
+		role: "user",
+		content: `Ralph Loop: "${goal}"`,
+		timestamp: Date.now(),
+	});
+
+	ctx.sessionManager.appendMessage({
+		role: "assistant",
+		content: [{ type: "text", text: finalText }],
+		api: "ralph-loop",
+		provider: ctx.model?.provider || "ralph-loop",
+		model: ctx.model?.id || "unknown",
+		usage: {
+			input: 0,
+			output: 0,
+			cacheRead: 0,
+			cacheWrite: 0,
+			totalTokens: 0,
+			cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+		},
+		stopReason: "stop",
+		timestamp: Date.now(),
+	});
 }
 
 function send(pi: ExtensionAPI, content: string, details?: RalphLoopResult): void {
